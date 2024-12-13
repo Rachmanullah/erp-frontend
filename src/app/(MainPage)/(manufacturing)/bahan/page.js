@@ -80,7 +80,6 @@ export default function BahanPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsLoading(true);
 
         try {
             // Buat FormData object

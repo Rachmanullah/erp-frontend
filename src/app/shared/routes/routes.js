@@ -3,6 +3,7 @@ export const ROUTES = {
     bahan: "/bahan",
     product: "/product",
     BoM: "/BoM",
+    detailBoM: (reference) => `/BoM/${reference}`,
     order: "/order",
 }
 
