@@ -7,5 +7,7 @@ export const ROUTES = {
     order: "/order",
     detailOrder: (orderID) => `/order/${orderID}`,
     vendor: "/vendor",
+    rfq: "/rfq",
+    detailRfq: (reference) => `/rfq/${reference}`,
 }
 

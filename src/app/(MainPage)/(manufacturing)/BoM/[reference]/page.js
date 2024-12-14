@@ -33,7 +33,6 @@ export default function DetailBoMPage({ params }) {
         return bahan.reduce((total, item) => total + (item.total_biaya_bahan || 0), 0);
     };
 
-
     return (
         <div className="p-6">
             <h1 className="text-3xl font-bold text-gray-800 mb-4">Bill Of Materials</h1>

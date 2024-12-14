@@ -13,6 +13,7 @@ export default function Sidebar() {
         { label: "BoM", href: ROUTES.BoM },
         { label: "Data Order", href: ROUTES.order },
         { label: "Data Vendor", href: ROUTES.vendor },
+        { label: "Data RFQ", href: ROUTES.rfq },
     ];
 
     return (
