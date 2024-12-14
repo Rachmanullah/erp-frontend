@@ -29,6 +29,13 @@ export default function BoMPage() {
         jumlah_order: 0,
     });
 
+    useOutsideClick(modalRef, () => {
+        resetForm();
+        setIsModalOpen(false);
+        setIsEdit(false);
+        setSelectedVendor(null);
+    }, []);
+
     const fetchData = async () => {
         try {
             const [responseBom, responseProduct, responseOrder] = await Promise.all([
@@ -78,11 +85,7 @@ export default function BoMPage() {
                 timer: 1000
             });
             fetchData();
-            setFormData({
-                id_produk: 0,
-                referensi_bom: "",
-                jumlah_order: 0,
-            });
+            resetForm();
             setError(null)
             setIsModalOpen(false); // Close modal after submission
         } catch (error) {
@@ -115,11 +118,7 @@ export default function BoMPage() {
                 timer: 1000
             });
             fetchData();
-            setFormData({
-                id_produk: 0,
-                referensi_bom: "",
-                jumlah_order: 0,
-            });
+            resetForm();
             setError(null)
             setIsEdit(false)
             setIsModalOpen(false); // Close modal after submission

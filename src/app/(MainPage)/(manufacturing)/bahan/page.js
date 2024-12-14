@@ -53,12 +53,7 @@ export default function BahanPage() {
     };
 
     useOutsideClick(modalRef, () => {
-        setFormData({
-            nama_bahan: "",
-            biaya_bahan: "",
-            harga_bahan: "",
-            gambar_bahan: "",
-        });
+        resetForm();
         setIsModalOpen(false);
         setIsModalDetail(false);
         setIsEdit(false);

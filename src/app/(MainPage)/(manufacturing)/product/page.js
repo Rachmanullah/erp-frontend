@@ -55,14 +55,7 @@ export default function ProductPage() {
     };
 
     useOutsideClick(modalRef, () => {
-        setFormData({
-            nama_produk: "",
-            referensi: "",
-            kategori: "",
-            harga_produk: "",
-            biaya_produksi: "",
-            gambar_produk: "",
-        });
+        resetForm();
         setIsModalOpen(false);
         setIsModalDetail(false);
         setIsEdit(false);
