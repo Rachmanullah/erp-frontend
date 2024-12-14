@@ -1,46 +1,45 @@
 "use client"
+
 import useOutsideClick from "@/app/hooks/useOutsideClick";
 import { useSearch } from "@/app/hooks/useSearch";
 import { CircularProgress } from "@/app/shared/components"
 import apiClient from "@/app/lib/apiClient";
 import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
-import { useBomForm } from "@/app/hooks/useBomForm";
 import Link from "next/link";
 import { ROUTES } from "@/app/shared/routes/routes";
+import useForm from "@/app/hooks/useForm";
+import { formatTanggal } from "@/app/shared/utils/dateTimeHelper";
 
 export default function BoMPage() {
     const [isLoading, setIsLoading] = useState(true);
+    const [dataOrder, setDataOrder] = useState([]);
     const [dataBom, setDataBom] = useState([]);
     const [dataProduct, setDataProduct] = useState([]);
-    const [dataBahan, setDataBahan] = useState([]);
-    const [initialData, setInitialData] = useState([]);
-    const { formData, error, setError, handleInputChange, handleAddBahan, handleBomChange, handleRemoveBahan, setFormData } = useBomForm({
-        id_produk: 0,
-        referensi: "",
-        jumlah_produk: 0,
-        bahan: [{
-            id_bahan: 0,
-            jumlah_bahan: 0,
-        }]
-    });
     const [isEdit, setIsEdit] = useState(false);
+    const [selectedOrder, setSelectedOrder] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const { searchTerm, setSearchTerm } = useSearch(initialData, setDataBom, ['nama_produk', 'referensi_bom']);
+    const [initialData, setInitialData] = useState([]);
+    const { searchTerm, setSearchTerm } = useSearch(initialData, setDataOrder, ['Produk.nama_produk', 'referensi', 'status', 'jumlah_order']);
     const modalRef = useRef(null);
+    const [error, setError] = useState(null);
+    const { formData, handleInputChange, resetForm, setFormData } = useForm({
+        id_produk: 0,
+        referensi_bom: "",
+        jumlah_order: 0,
+    });
 
     const fetchData = async () => {
         try {
-            const [responseBom, responseProduct, responseMaterial] = await Promise.all([
+            const [responseBom, responseProduct, responseOrder] = await Promise.all([
                 apiClient.get('/bom', { cache: 'force-cache' }),
                 apiClient.get('/product', { cache: 'force-cache' }),
-                apiClient.get('/bahan', { cache: 'force-cache' }),
+                apiClient.get('/order', { cache: 'force-cache' }),
             ]);
-            console.log(responseBom)
-            setDataBom(responseBom.data.data);
-            setInitialData(responseBom.data.data);
-            setDataBahan(responseMaterial.data.data);
+            setDataOrder(responseOrder.data.data);
+            setInitialData(responseOrder.data.data);
             setDataProduct(responseProduct.data.data);
+            setDataBom(responseBom.data.data);
 
             setIsLoading(false);
         } catch (error) {
@@ -53,29 +52,12 @@ export default function BoMPage() {
         fetchData();
     }, []);
 
-    useOutsideClick(modalRef, () => {
-        setFormData({
-            id_produk: 0,
-            referensi: "",
-            jumlah_produk: 0,
-            bahan: [{
-                id_bahan: 0,
-                jumlah_bahan: 0,
-            }]
-        });
-        setIsModalOpen(false);
-        setIsEdit(false);
-    });
-
     const handleEdit = (item) => {
+        setSelectedOrder(item);
         setFormData({
             id_produk: item.id_produk,
-            referensi: item.referensi_bom,
-            jumlah_produk: item.jumlah_produk,
-            bahan: item.bahan.map(b => ({
-                id_bahan: b.id_bahan,
-                jumlah_bahan: b.jumlah_bahan
-            }))
+            referensi_bom: item.referensi_bom,
+            jumlah_order: item.jumlah_order,
         });
         setIsEdit(true);
         setIsModalOpen(true);
@@ -86,7 +68,7 @@ export default function BoMPage() {
         setIsLoading(true);
         console.log(formData)
         try {
-            const response = await apiClient.post('/bom', formData);
+            const response = await apiClient.post('/order', formData);
             setIsLoading(false);
             Swal.fire({
                 title: 'Success!',
@@ -98,12 +80,8 @@ export default function BoMPage() {
             fetchData();
             setFormData({
                 id_produk: 0,
-                referensi: "",
-                jumlah_produk: 0,
-                bahan: [{
-                    id_bahan: 0,
-                    jumlah_bahan: 0,
-                }]
+                referensi_bom: "",
+                jumlah_order: 0,
             });
             setError(null)
             setIsModalOpen(false); // Close modal after submission
@@ -126,9 +104,8 @@ export default function BoMPage() {
     const handleUpdate = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        console.log(formData)
         try {
-            const response = await apiClient.put(`/bom/${formData.referensi}`, formData);
+            const response = await apiClient.put(`/order/${selectedOrder.id}`, formData);
             setIsLoading(false);
             Swal.fire({
                 title: 'Success!',
@@ -140,12 +117,8 @@ export default function BoMPage() {
             fetchData();
             setFormData({
                 id_produk: 0,
-                referensi: "",
-                jumlah_produk: 0,
-                bahan: [{
-                    id_bahan: 0,
-                    jumlah_bahan: 0,
-                }]
+                referensi_bom: "",
+                jumlah_order: 0,
             });
             setError(null)
             setIsEdit(false)
@@ -166,7 +139,7 @@ export default function BoMPage() {
         }
     }
 
-    const handleDelete = (reference) => {
+    const handleDelete = (orderID) => {
         Swal.fire({
             title: "Are you sure?",
             text: "You won't be able to revert this!",
@@ -177,7 +150,7 @@ export default function BoMPage() {
             confirmButtonText: "Yes, delete it!"
         }).then(async (result) => {
             if (result.isConfirmed) {
-                await apiClient.delete(`/bom/${reference}`)
+                await apiClient.delete(`/order/${orderID}`)
                     .then((res) => {
                         fetchData();
                         Swal.fire({
@@ -201,9 +174,8 @@ export default function BoMPage() {
     }
 
     return (
-        <div className="p-4" >
-            <h1 className="text-2xl font-bold">Management Bill Of Materials</h1>
-
+        <div className="p-4">
+            <h1 className="text-2xl font-bold">Data Order</h1>
             <div className="flex justify-between relative items-center">
                 <button onClick={() => setIsModalOpen(true)} className="relative inline-flex items-center justify-center p-0.5 mb-5 me-2 mt-5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800">
                     <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
@@ -218,7 +190,7 @@ export default function BoMPage() {
                                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                             </svg>
                         </div>
-                        <input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} type="search" id="default-search" className="block w-72 p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search BoM" autoComplete="off" />
+                        <input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} type="search" id="default-search" className="block w-72 p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search Order" autoComplete="off" />
                     </div>
                 </form>
             </div>
@@ -232,7 +204,7 @@ export default function BoMPage() {
                         className="relative bg-white rounded-lg shadow-lg p-8 max-w-lg w-full dark:bg-gray-800 overflow-y-auto max-h-screen"
                     >
                         <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6">
-                            {isEdit ? 'Edit BoM' : 'Tambah BoM'}
+                            {isEdit ? 'Edit Order' : 'Tambah Order'}
                         </h3>
                         <form className="space-y-6">
                             <div className="grid grid-cols-1 gap-4">
@@ -253,98 +225,60 @@ export default function BoMPage() {
                                     {error?.id_produk && <p className="text-red-500 text-sm mt-2">{error?.id_produk}</p>}
                                 </div>
                                 <div>
-                                    <label htmlFor="referensi" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Referensi</label>
-                                    <input
-                                        type="text"
-                                        id="referensi"
-                                        name="referensi"
-                                        value={formData.referensi}
+                                    <label htmlFor="referensi_bom" className="block text-sm font-medium text-gray-700 dark:text-gray-300">BoM</label>
+                                    <select
+                                        id="referensi_bom"
+                                        name="referensi_bom"
+                                        value={formData.referensi_bom || ''}
                                         onChange={handleInputChange}
-                                        className="mt-1 block w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                        placeholder="Referensi"
-                                    />
-                                    {error?.referensi && <p className="text-red-500 text-sm mt-2">{error?.referensi}</p>}
+                                        className={`mt-1 block w-full p-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white ${error?.referensi_bom ? 'border-red-500 text-red-500' : 'border-gray-300 text-gray-900'}`}
+                                    >
+                                        <option value="" disabled hidden>Pilih BoM</option>
+                                        {dataBom.map((item, index) => (
+                                            <option key={index} value={item.referensi_bom}>[{item.referensi_bom}] {item.nama_produk}</option>
+                                        ))}
+                                    </select>
+                                    {error?.referensi_bom && <p className="text-red-500 text-sm mt-2">{error?.referensi_bom}</p>}
                                 </div>
                                 <div>
-                                    <label htmlFor="jumlah_produk" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Jumlah Produk</label>
+                                    <label htmlFor="jumlah_order" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Jumlah Order</label>
                                     <input
                                         type="number"
-                                        id="jumlah_produk"
-                                        name="jumlah_produk"
-                                        value={formData.jumlah_produk}
+                                        id="jumlah_order"
+                                        name="jumlah_order"
+                                        value={formData.jumlah_order}
+                                        min={0}
                                         onChange={handleInputChange}
                                         className="mt-1 block w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                        placeholder="Jumlah Produk"
+                                        placeholder="Jumlah Order"
                                     />
-                                    {error?.jumlah_produk && <p className="text-red-500 text-sm mt-2">{error?.jumlah_produk}</p>}
+                                    {error?.jumlah_order && <p className="text-red-500 text-sm mt-2">{error?.jumlah_order}</p>}
                                 </div>
-                            </div>
-
-                            <div className="space-y-4">
-                                {formData.bahan.map((material, index) => (
-                                    <div key={index} className="grid grid-cols-5 gap-4 items-center">
-                                        <div className="col-span-2">
-                                            <label htmlFor={`id_bahan_${index}`} className="block text-sm font-medium text-gray-700 dark:text-gray-300">Bahan</label>
-                                            <select
-                                                id={`id_bahan_${index}`}
-                                                name="id_bahan"
-                                                value={material.id_bahan || ''}
-                                                onChange={(e) => handleBomChange(index, e)}
-                                                className={`mt-1 block w-full p-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white ${error?.[`bahan[${index}].id_bahan`] ? 'border-red-500 text-red-500' : 'border-gray-300 text-gray-900'}`}
-                                            >
-                                                <option value="" disabled hidden>Pilih Bahan</option>
-                                                {dataBahan.map((item) => (
-                                                    <option key={item.id} value={item.id}>{item.nama_bahan}</option>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Bahan yang Dibutuhkan</label>
+                                    <div className="overflow-x-auto mt-2">
+                                        <table className="min-w-full text-sm text-left text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600">
+                                            <thead className="bg-gray-200 dark:bg-gray-700">
+                                                <tr>
+                                                    <th scope="col" className="px-4 py-2">#</th>
+                                                    <th scope="col" className="px-4 py-2">Nama Bahan</th>
+                                                    <th scope="col" className="px-4 py-2">Jumlah</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {dataBom.find(bom => bom.referensi_bom === formData.referensi_bom)?.bahan.map((bahan, index) => (
+                                                    <tr key={bahan.id_bahan} className="border-b border-gray-300 dark:border-gray-600">
+                                                        <td className="px-4 py-2">{index + 1}</td>
+                                                        <td className="px-4 py-2">{bahan.nama_bahan}</td>
+                                                        <td className="px-4 py-2">{bahan.jumlah_bahan * formData.jumlah_order}</td>
+                                                    </tr>
                                                 ))}
-                                            </select>
-                                            {error?.[`bahan[${index}].id_bahan`] && <p className="text-red-500 text-sm mt-2">{error?.[`bahan[${index}].id_bahan`]}</p>}
-                                        </div>
-                                        <div className="col-span-2">
-                                            <label htmlFor={`jumlah_bahan_${index}`} className="block text-sm font-medium text-gray-700 dark:text-gray-300">Jumlah</label>
-                                            <input
-                                                type="number"
-                                                id={`jumlah_bahan_${index}`}
-                                                name="jumlah_bahan"
-                                                value={material.jumlah_bahan}
-                                                onChange={(e) => handleBomChange(index, e)}
-                                                className="mt-1 block w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                                placeholder="Jumlah"
-                                            />
-                                            {error?.[`bahan[${index}].jumlah_bahan`] && <p className="text-red-500 text-sm mt-2">{error?.[`bahan[${index}].jumlah_bahan`]}</p>}
-                                        </div>
-                                        <div hidden className="col-span-2">
-                                            <label htmlFor={`total_biaya_bahan_${index}`} className="block text-sm font-medium text-gray-700 dark:text-gray-300">Total Biaya Bahan</label>
-                                            <input
-                                                type="number"
-                                                id={`total_biaya_bahan_${index}`}
-                                                name="total_biaya_bahan"
-                                                value={material.total_biaya_bahan || ''}
-                                                readOnly
-                                                className="mt-1 block w-full p-2 border border-gray-300 rounded-lg bg-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                                placeholder="Total Biaya Bahan"
-                                            />
-                                        </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => handleRemoveBahan(index)}
-                                            className="mt-6 px-3 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-                                        >
-                                            Hapus
-                                        </button>
+                                            </tbody>
+                                        </table>
                                     </div>
-                                ))}
-                            </div>
+                                </div>
 
-                            <div className="flex justify-between mt-4">
-                                <button
-                                    type="button"
-                                    onClick={handleAddBahan}
-                                    className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
-                                >
-                                    Tambah Bahan
-                                </button>
                             </div>
-
                             <div className="flex justify-end mt-6">
                                 <button
                                     type="button"
@@ -377,7 +311,16 @@ export default function BoMPage() {
                                 Reference
                             </th>
                             <th scope="col" className="px-6 py-3">
+                                Date
+                            </th>
+                            <th scope="col" className="px-6 py-3">
                                 Product
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Quantity
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Status
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Action
@@ -387,35 +330,46 @@ export default function BoMPage() {
                     <tbody>
                         {isLoading ? (
                             <tr className="text-center">
-                                <td colSpan="4" className="py-4">
+                                <td colSpan="7" className="py-4">
                                     <CircularProgress size={26} />
                                 </td>
                             </tr>
-                        ) : dataBom.length > 0 ? (
+                        ) : dataOrder.length > 0 ? (
                             // Filter data untuk memastikan hanya satu referensi yang muncul 
-                            dataBom.map((item, index) => (
+                            dataOrder.map((item, index) => (
                                 <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                                     <td className="px-6 py-4">
                                         {index + 1}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {item.referensi_bom}
+                                        {item.referensi}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {item.nama_produk}
+                                        {item.created_at ? formatTanggal(item.created_at) : ''}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {item.Product.nama_produk}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {item.jumlah_order}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <span className={`px-5 py-2 text-md font-bold rounded-lg ${item.status === 'Draft' ? 'text-black bg-yellow-300' : item.status === 'Confirmed' ? 'text-black bg-cyan-300' : item.status === 'Production' ? 'text-black bg-blue-300' : item.status === 'Done' ? 'text-white bg-green-500' : ''}`}>
+                                            {item.status}
+                                        </span>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex gap-2">
                                             <button onClick={() => handleEdit(item)} className="font-medium text-yellow-600 dark:text-yellow-500 hover:underline">Edit</button>
-                                            <Link href={ROUTES.detailBoM(item.referensi_bom)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Detail</Link>
-                                            <button onClick={() => handleDelete(item.referensi_bom)} className="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</button>
+                                            <Link href={ROUTES.detailOrder(item.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Detail</Link>
+                                            <button onClick={() => handleDelete(item.id)} className="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</button>
                                         </div>
                                     </td>
                                 </tr>
                             ))
                         ) : (
                             <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                <td colSpan="4" className="px-6 py-4 text-center">
+                                <td colSpan="7" className="px-6 py-4 text-center">
                                     <p>Data Tidak Tersedia</p>
                                 </td>
                             </tr>
@@ -425,4 +379,5 @@ export default function BoMPage() {
             </div>
         </div>
     )
+
 }

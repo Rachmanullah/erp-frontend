@@ -5,5 +5,7 @@ export const ROUTES = {
     BoM: "/BoM",
     detailBoM: (reference) => `/BoM/${reference}`,
     order: "/order",
+    detailOrder: (orderID) => `/order/${orderID}`,
+    
 }
 
