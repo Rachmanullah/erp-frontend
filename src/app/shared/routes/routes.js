@@ -13,5 +13,6 @@ export const ROUTES = {
     detailpurchaseOrder: (purchaseOrderID) => `/purchase-order/${purchaseOrderID}`,
     bill: "/bill",
     detailBill: (referenceRfq) => `/bill/${referenceRfq}`,
+    customer: "/customer",
 }
 

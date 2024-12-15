@@ -15,6 +15,7 @@ export default function Sidebar() {
         { label: "Data Vendor", href: ROUTES.vendor },
         { label: "Data RFQ", href: ROUTES.rfq },
         { label: "Purchase order", href: ROUTES.purchaseOrder },
+        { label: "Data Customer", href: ROUTES.customer },
     ];
 
     return (
