@@ -4,7 +4,7 @@ import apiClient from "@/app/lib/apiClient";
 import { useEffect, useRef, useState, use } from "react";
 import { formatTanggal } from "@/app/shared/utils/dateTimeHelper";
 
-export default function DetailBoMPage({ params }) {
+export default function DetailRfqPage({ params }) {
     const { reference } = use(params);
     const [isLoading, setIsLoading] = useState(true);
     const [dataRfq, setDataRfq] = useState([]);
@@ -63,7 +63,7 @@ export default function DetailBoMPage({ params }) {
 
     const handleValidateProduct = async () => {
         try {
-            const response = await apiClient.put(`/rfq/status/${dataRfq.referensi}`, { status: "Validated" });
+            const response = await apiClient.put(`/rfq/status/${dataRfq.referensi}`, { status: "Purchase Order" });
             console.log(response)
             setDataRfq(response.data.data);
         } catch (error) {

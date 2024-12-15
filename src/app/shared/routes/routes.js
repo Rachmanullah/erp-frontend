@@ -9,5 +9,9 @@ export const ROUTES = {
     vendor: "/vendor",
     rfq: "/rfq",
     detailRfq: (reference) => `/rfq/${reference}`,
+    purchaseOrder: "/purchase-order",
+    detailpurchaseOrder: (purchaseOrderID) => `/purchase-order/${purchaseOrderID}`,
+    bill: "/bill",
+    detailBill: (referenceRfq) => `/bill/${referenceRfq}`,
 }
 
