@@ -174,7 +174,7 @@ export default function DetailOrder({ params }) {
                         </div>
                         <div className="flex flex-col">
                             <span className="font-medium text-gray-600">Status:</span>
-                            <span className={`max-w-max  px-5 py-2 text-lg font-bold rounded-lg ${dataOrder.status === 'Draft' ? 'text-black bg-yellow-300' : dataOrder.status === 'Confirmed' ? 'text-black bg-cyan-300' : dataOrder.status === 'Production' ? 'text-black bg-blue-300' : dataOrder.status === 'Done' ? 'text-white bg-green-500' : ''}`}>
+                            <span className={`max-w-max  px-5 py-2 text-lg font-bold rounded-3xl  ${dataOrder.status === 'Draft' ? 'text-black bg-yellow-300' : dataOrder.status === 'Confirmed' ? 'text-black bg-cyan-300' : dataOrder.status === 'Production' ? 'text-black bg-blue-300' : dataOrder.status === 'Done' ? 'text-white bg-green-500' : ''}`}>
                                 {dataOrder?.status}
                             </span>
                         </div>

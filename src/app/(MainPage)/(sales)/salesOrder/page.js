@@ -105,7 +105,16 @@ export default function SalesOrderPage() {
                                         {item.total_pembayaran}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {item.status}
+                                        <span
+                                            className={`px-5 py-2 text-md font-bold rounded-3xl ${{
+                                                'Nothing to Invoice': 'text-black bg-gray-500',
+                                                'Waiting Invoice': 'text-white bg-cyan-500',
+                                                'Fully Invoiced': 'text-white bg-green-500',
+                                            }[item.status] || 'text-black bg-gray-200'
+                                                }`}
+                                        >
+                                            {item.status}
+                                        </span>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex gap-2">

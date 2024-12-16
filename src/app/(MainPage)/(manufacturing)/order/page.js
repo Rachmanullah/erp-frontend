@@ -353,7 +353,7 @@ export default function BoMPage() {
                                         {item.jumlah_order}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className={`px-5 py-2 text-md font-bold rounded-lg ${item.status === 'Draft' ? 'text-black bg-yellow-300' : item.status === 'Confirmed' ? 'text-black bg-cyan-300' : item.status === 'Production' ? 'text-black bg-blue-300' : item.status === 'Done' ? 'text-white bg-green-500' : ''}`}>
+                                        <span className={`px-5 py-2 text-md font-bold rounded-3xl  ${item.status === 'Draft' ? 'text-black bg-yellow-300' : item.status === 'Confirmed' ? 'text-black bg-cyan-300' : item.status === 'Production' ? 'text-black bg-blue-300' : item.status === 'Done' ? 'text-white bg-green-500' : ''}`}>
                                             {item.status}
                                         </span>
                                     </td>

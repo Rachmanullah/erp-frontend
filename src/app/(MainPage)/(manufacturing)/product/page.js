@@ -85,7 +85,6 @@ export default function ProductPage() {
             // Buat FormData object
             const formDataObj = new FormData();
             formDataObj.append("nama_produk", formData.nama_produk);
-            formDataObj.append("referensi", formData.referensi);
             formDataObj.append("kategori", formData.kategori);
             formDataObj.append("harga_produk", formData.harga_produk);
             formDataObj.append("biaya_produksi", formData.biaya_produksi);
@@ -132,7 +131,6 @@ export default function ProductPage() {
         try {
             const formDataObj = new FormData();
             formDataObj.append("nama_produk", formData.nama_produk);
-            formDataObj.append("referensi", formData.referensi);
             formDataObj.append("kategori", formData.kategori);
             formDataObj.append("harga_produk", formData.harga_produk);
             formDataObj.append("biaya_produksi", formData.biaya_produksi);
@@ -244,13 +242,13 @@ export default function ProductPage() {
                                 <input value={formData.nama_produk} onChange={handleInputChange} type="text" name="nama_produk" id="nama_produk" autoComplete="off" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="Nama Product" required />
                                 {error?.nama_produk && <p className="text-red-500 text-sm mt-1">{error?.nama_produk}</p>}
                             </div>
-
-                            <div>
-                                <label htmlFor="referensi" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Referensi</label>
-                                <input value={formData.referensi} onChange={handleInputChange} type="text" name="referensi" id="referensi" autoComplete="off" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="Referensi" />
-                                {error?.referensi && <p className="text-red-500 text-sm mt-1">{error?.referensi}</p>}
-                            </div>
-
+                            {isEdit && (
+                                <div>
+                                    <label htmlFor="referensi" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Referensi</label>
+                                    <input readOnly value={formData.referensi} onChange={handleInputChange} type="text" name="referensi" id="referensi" autoComplete="off" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="Referensi" />
+                                    {error?.referensi && <p className="text-red-500 text-sm mt-1">{error?.referensi}</p>}
+                                </div>
+                            )}
                             <div>
                                 <label htmlFor="kategori" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kategori</label>
                                 <select

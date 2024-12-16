@@ -97,23 +97,39 @@ export default function DetailSalesOrderPage({ params }) {
                                                 </span>
                                             </div>
                                         )}
-                                        <div className="flex flex-col">
-                                            <span className="font-medium text-gray-600">Status:</span>
-                                            <span className="text-lg font-bold text-gray-800">
-                                                {dataDetail.status}
-                                            </span>
-                                        </div>
                                         {dataDetail.referensi_invoice.status && (
                                             <div className="flex flex-col">
                                                 <span className="font-medium text-gray-600">Status Invoice:</span>
                                                 <span className="text-lg font-bold text-gray-800">
-                                                    {dataDetail.referensi_invoice.status}
+                                                    <span
+                                                        className={`max-w-max px-5 py-2 text-lg font-bold rounded-3xl ${{
+                                                            'Draft': 'text-black bg-gray-500',
+                                                            'Posted': 'text-white bg-cyan-500',
+                                                            'Paid': 'text-white bg-green-500',
+                                                            'Not Paid': 'text-white bg-red-500',
+                                                        }[dataDetail.referensi_invoice.status] || 'text-black bg-gray-200'
+                                                            }`}
+                                                    >
+                                                        {dataDetail.referensi_invoice.status}
+                                                    </span>
                                                 </span>
                                             </div>
                                         )}
                                     </>
                                 )}
-
+                                <div className="flex flex-col">
+                                    <span className="font-medium text-gray-600">Status:</span>
+                                    <span
+                                        className={`max-w-max px-5 py-2 text-lg font-bold rounded-3xl ${{
+                                            'Nothing to Invoice': 'text-black bg-gray-500',
+                                            'To Invoice': 'text-white bg-cyan-500',
+                                            'Fully Invoiced': 'text-white bg-green-500',
+                                        }[dataDetail.status] || 'text-black bg-gray-200'
+                                            }`}
+                                    >
+                                        {dataDetail.status}
+                                    </span>
+                                </div>
                             </div>
 
                             <h2 className="text-2xl font-bold text-gray-800 mb-4">Product Details</h2>

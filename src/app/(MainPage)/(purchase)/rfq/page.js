@@ -268,19 +268,24 @@ export default function RfqPage() {
                                     </select>
                                     {error?.id_vendor && <p className="text-red-500 text-sm mt-2">{error?.id_vendor}</p>}
                                 </div>
-                                <div>
-                                    <label htmlFor="referensi" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Referensi</label>
-                                    <input
-                                        type="text"
-                                        id="referensi"
-                                        name="referensi"
-                                        value={formData.referensi}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                        placeholder="Referensi"
-                                    />
-                                    {error?.referensi && <p className="text-red-500 text-sm mt-2">{error?.referensi}</p>}
-                                </div>
+                                {
+                                    isEdit && (
+                                        <div>
+                                            <label htmlFor="referensi" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Referensi</label>
+                                            <input
+                                                type="text"
+                                                id="referensi"
+                                                name="referensi"
+                                                value={formData.referensi}
+                                                onChange={handleInputChange}
+                                                className="mt-1 block w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                                placeholder="Referensi"
+                                                readOnly
+                                            />
+                                            {error?.referensi && <p className="text-red-500 text-sm mt-2">{error?.referensi}</p>}
+                                        </div>
+                                    )
+                                }
                                 <div>
                                     <label htmlFor="deadline_order" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Deadline Order</label>
                                     <input
@@ -445,7 +450,20 @@ export default function RfqPage() {
                                         {formatTanggal(item.deadline_order)}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {item.status}
+                                        <span
+                                            className={`px-5 py-2 text-md font-bold rounded-3xl ${{
+                                                RFQ: 'text-black bg-yellow-300',
+                                                'Send RFQ': 'text-black bg-orange-300',
+                                                Confirmed: 'text-black bg-cyan-300',
+                                                Received: 'text-black bg-purple-300',
+                                                'Purchase Order': 'text-white bg-green-500',
+                                                Cancel: 'text-white bg-red-500',
+                                                Return: 'text-white bg-gray-500',
+                                            }[item.status] || 'text-black bg-gray-200'
+                                                }`}
+                                        >
+                                            {item.status}
+                                        </span>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex gap-2">

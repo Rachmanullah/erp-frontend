@@ -175,7 +175,20 @@ export default function DetailQuotationPage({ params }) {
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="font-medium text-gray-600">status:</span>
-                                    <span className="text-lg font-bold text-gray-800">{dataQuotation.status}</span>
+                                    <span
+                                        className={`max-w-max px-5 py-2 text-lg font-bold rounded-3xl ${{
+                                            Quotation: 'text-black bg-yellow-300',
+                                            'Quotation Sent': 'text-black bg-orange-300',
+                                            Confirmed: 'text-black bg-cyan-300',
+                                            Received: 'text-black bg-purple-300',
+                                            'Sales Order': 'text-white bg-green-500',
+                                            Cancel: 'text-white bg-red-500',
+                                            Return: 'text-white bg-gray-500',
+                                        }[dataQuotation.status] || 'text-black bg-gray-200'
+                                            }`}
+                                    >
+                                        {dataQuotation.status}
+                                    </span>
                                 </div>
                             </div>
 

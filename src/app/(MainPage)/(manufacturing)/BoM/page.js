@@ -252,19 +252,24 @@ export default function BoMPage() {
                                     </select>
                                     {error?.id_produk && <p className="text-red-500 text-sm mt-2">{error?.id_produk}</p>}
                                 </div>
-                                <div>
-                                    <label htmlFor="referensi" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Referensi</label>
-                                    <input
-                                        type="text"
-                                        id="referensi"
-                                        name="referensi"
-                                        value={formData.referensi}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                        placeholder="Referensi"
-                                    />
-                                    {error?.referensi && <p className="text-red-500 text-sm mt-2">{error?.referensi}</p>}
-                                </div>
+                                {
+                                    isEdit && (
+                                        <div>
+                                            <label htmlFor="referensi" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Referensi</label>
+                                            <input
+                                                type="text"
+                                                id="referensi"
+                                                name="referensi"
+                                                value={formData.referensi}
+                                                onChange={handleInputChange}
+                                                className="mt-1 block w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                                placeholder="Referensi"
+                                                readOnly
+                                            />
+                                            {error?.referensi && <p className="text-red-500 text-sm mt-2">{error?.referensi}</p>}
+                                        </div>
+                                    )
+                                }
                                 <div>
                                     <label htmlFor="jumlah_produk" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Jumlah Produk</label>
                                     <input

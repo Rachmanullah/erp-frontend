@@ -104,7 +104,7 @@ export default function DetailRfqPage({ params }) {
                             {dataRfq.status === "RFQ" && (
                                 <button
                                     onClick={handleSendRfq}
-                                    className="px-4 py-2 bg-yellow-500 text-white rounded"
+                                    className="px-4 py-2 shadow-lg shadow-black bg-yellow-500 text-white rounded"
                                 >
                                     Send RFQ
                                 </button>
@@ -114,7 +114,7 @@ export default function DetailRfqPage({ params }) {
                             {dataRfq.status === "Send RFQ" && (
                                 <button
                                     onClick={handleConfirmOrder}
-                                    className="px-4 py-2 bg-blue-500 text-white rounded"
+                                    className="px-4 py-2 shadow-lg shadow-black bg-blue-500 text-white rounded"
                                 >
                                     Confirm Order
                                 </button>
@@ -124,7 +124,7 @@ export default function DetailRfqPage({ params }) {
                             {dataRfq.status === "Confirmed" && (
                                 <button
                                     onClick={handleReceiveProduct}
-                                    className="px-4 py-2 bg-green-500 text-white rounded"
+                                    className="px-4 py-2 shadow-lg shadow-black bg-green-500 text-white rounded"
                                 >
                                     Receive Product
                                 </button>
@@ -134,13 +134,13 @@ export default function DetailRfqPage({ params }) {
                                 <div className="flex gap-4">
                                     <button
                                         onClick={handleValidateProduct}
-                                        className="px-4 py-2 bg-green-500 text-white rounded"
+                                        className="px-4 py-2 shadow-lg shadow-black bg-green-500 text-white rounded"
                                     >
                                         Validate
                                     </button>
                                     <button
                                         onClick={handleCancelProduct}
-                                        className="px-4 py-2 bg-red-500 text-white rounded"
+                                        className="px-4 py-2 shadow-lg shadow-black bg-red-500 text-white rounded"
                                     >
                                         Cancel
                                     </button>
@@ -151,7 +151,7 @@ export default function DetailRfqPage({ params }) {
                                 <div className="flex gap-4">
                                     <button
                                         onClick={handleReturnProduct}
-                                        className="px-4 py-2 bg-gray-500 text-white rounded"
+                                        className="px-4 py-2 shadow-lg shadow-black bg-gray-500 text-white rounded"
                                     >
                                         Return
                                     </button>
@@ -175,7 +175,20 @@ export default function DetailRfqPage({ params }) {
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="font-medium text-gray-600">status:</span>
-                                    <span className="text-lg font-bold text-gray-800">{dataRfq.status}</span>
+                                    <span
+                                        className={`max-w-max px-5 py-2 text-lg font-bold rounded-3xl ${{
+                                            RFQ: 'text-black bg-yellow-300',
+                                            'Send RFQ': 'text-black bg-orange-300',
+                                            Confirmed: 'text-black bg-cyan-300',
+                                            Received: 'text-black bg-purple-300',
+                                            'Purchase Order': 'text-white bg-green-500',
+                                            Cancel: 'text-white bg-red-500',
+                                            Return: 'text-white bg-gray-500',
+                                        }[dataRfq.status] || 'text-black bg-gray-200'
+                                            }`}
+                                    >
+                                        {dataRfq.status}
+                                    </span>
                                 </div>
                             </div>
 
