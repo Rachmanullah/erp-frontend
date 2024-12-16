@@ -14,5 +14,11 @@ export const ROUTES = {
     bill: "/bill",
     detailBill: (referenceRfq) => `/bill/${referenceRfq}`,
     customer: "/customer",
+    quotation: "/quotation",
+    detailQuotation: (reference) => `/quotation/${reference}`,
+    salesOrder: "/salesOrder",
+    detailsalesOrder: (salesOrderID) => `/salesOrder/${salesOrderID}`,
+    invoice: "/invoice",
+    detailInvoice: (referenceQuotation) => `/invoice/${referenceQuotation}`,
 }
 

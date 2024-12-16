@@ -1,21 +1,21 @@
 "use client"
 import { CircularProgress } from "@/app/shared/components"
 import apiClient from "@/app/lib/apiClient";
-import { useEffect, useRef, useState, use } from "react";
+import { useEffect, useState, use } from "react";
 import { formatTanggal } from "@/app/shared/utils/dateTimeHelper";
 
-export default function DetailRfqPage({ params }) {
-    const { reference } = use(params);
+export default function DetailQuotationPage({ params }) {
+    const { referensi } = use(params);
     const [isLoading, setIsLoading] = useState(true);
-    const [dataRfq, setDataRfq] = useState([]);
+    const [dataQuotation, setDataQuotation] = useState([]);
     const [showReceived, setShowReceived] = useState(false);
 
     const fetchData = async () => {
         try {
-            await apiClient.get(`/rfq/${reference}`, { cache: 'force-cache' })
+            await apiClient.get(`/quotation/${referensi}`, { cache: 'force-cache' })
                 .then((res) => {
                     console.log(res.data.data);
-                    setDataRfq(res.data.data);
+                    setDataQuotation(res.data.data);
                 })
                 .catch((err) => console.error(err));
             setIsLoading(false);
@@ -30,13 +30,13 @@ export default function DetailRfqPage({ params }) {
     }, []);
 
     const getTotalKeseluruhan = () => {
-        return dataRfq.Bahan.reduce((total, item) => total + (item.total_biaya || 0), 0);
+        return dataQuotation.Produk.reduce((total, item) => total + (item.total_biaya || 0), 0);
     };
 
-    const handleSendRfq = async () => {
+    const handleSendQuotation = async () => {
         try {
-            const response = await apiClient.put(`/rfq/status/${dataRfq.referensi}`, { status: "Send RFQ" });
-            setDataRfq(response.data.data);
+            const response = await apiClient.put(`/quotation/status/${dataQuotation.referensi}`, { status: "Quotation Sent" });
+            setDataQuotation(response.data.data);
         } catch (error) {
             console.error("Error confirming RFQ:", error);
         }
@@ -44,8 +44,8 @@ export default function DetailRfqPage({ params }) {
 
     const handleConfirmOrder = async () => {
         try {
-            const response = await apiClient.put(`/rfq/status/${dataRfq.referensi}`, { status: "Confirmed" });
-            setDataRfq(response.data.data);
+            const response = await apiClient.put(`/quotation/status/${dataQuotation.referensi}`, { status: "Delivery" });
+            setDataQuotation(response.data.data);
         } catch (error) {
             console.error("Error confirming order:", error);
         }
@@ -53,8 +53,8 @@ export default function DetailRfqPage({ params }) {
 
     const handleReceiveProduct = async () => {
         try {
-            const response = await apiClient.put(`/rfq/status/${dataRfq.referensi}`, { status: "Received" });
-            setDataRfq(response.data.data);
+            const response = await apiClient.put(`/quotation/status/${dataQuotation.referensi}`, { status: "Received" });
+            setDataQuotation(response.data.data);
             setShowReceived(true);
         } catch (error) {
             console.error("Error receiving product:", error);
@@ -63,9 +63,9 @@ export default function DetailRfqPage({ params }) {
 
     const handleValidateProduct = async () => {
         try {
-            const response = await apiClient.put(`/rfq/status/${dataRfq.referensi}`, { status: "Purchase Order" });
+            const response = await apiClient.put(`/quotation/status/${dataQuotation.referensi}`, { status: "Sales Order" });
             console.log(response)
-            setDataRfq(response.data.data);
+            setDataQuotation(response.data.data);
         } catch (error) {
             console.error("Error receiving product:", error);
         }
@@ -73,9 +73,9 @@ export default function DetailRfqPage({ params }) {
 
     const handleCancelProduct = async () => {
         try {
-            const response = await apiClient.put(`/rfq/status/${dataRfq.referensi}`, { status: "Cancel" });
+            const response = await apiClient.put(`/quotation/status/${dataQuotation.referensi}`, { status: "Cancel" });
             console.log(response)
-            setDataRfq(response.data.data);
+            setDataQuotation(response.data.data);
         } catch (error) {
             console.error("Error receiving product:", error);
         }
@@ -83,9 +83,9 @@ export default function DetailRfqPage({ params }) {
 
     const handleReturnProduct = async () => {
         try {
-            const response = await apiClient.put(`/rfq/status/${dataRfq.referensi}`, { status: "Return" });
+            const response = await apiClient.put(`/quotation/status/${dataQuotation.referensi}`, { status: "Return" });
             console.log(response)
-            setDataRfq(response.data.data);
+            setDataQuotation(response.data.data);
         } catch (error) {
             console.error("Error receiving product:", error);
         }
@@ -93,7 +93,7 @@ export default function DetailRfqPage({ params }) {
 
     return (
         <div className="p-6">
-            <h1 className="text-3xl font-bold text-gray-800 mb-4">Request For Quotation</h1>
+            <h1 className="text-3xl font-bold text-gray-800 mb-4">Sales Quotation</h1>
             {
                 isLoading ? (
                     <CircularProgress size={26} />
@@ -101,27 +101,27 @@ export default function DetailRfqPage({ params }) {
                     <div>
                         <div className="mt-4 flex space-x-4">
                             {/* Tombol Send RFQ */}
-                            {dataRfq.status === "RFQ" && (
+                            {dataQuotation.status === "Quotation" && (
                                 <button
-                                    onClick={handleSendRfq}
+                                    onClick={handleSendQuotation}
                                     className="px-4 py-2 bg-yellow-500 text-white rounded"
                                 >
-                                    Send RFQ
+                                    Quotation Sent
                                 </button>
                             )}
 
                             {/* Tombol Confirm Order */}
-                            {dataRfq.status === "Send RFQ" && (
+                            {dataQuotation.status === "Quotation Sent" && (
                                 <button
                                     onClick={handleConfirmOrder}
                                     className="px-4 py-2 bg-blue-500 text-white rounded"
                                 >
-                                    Confirm Order
+                                    Confirm
                                 </button>
                             )}
 
                             {/* Tombol Receive Product */}
-                            {dataRfq.status === "Confirmed" && (
+                            {dataQuotation.status === "Delivery" && (
                                 <button
                                     onClick={handleReceiveProduct}
                                     className="px-4 py-2 bg-green-500 text-white rounded"
@@ -130,7 +130,7 @@ export default function DetailRfqPage({ params }) {
                                 </button>
                             )}
 
-                            {dataRfq.status === "Received" && (
+                            {dataQuotation.status === "Received" && (
                                 <div className="flex gap-4">
                                     <button
                                         onClick={handleValidateProduct}
@@ -147,7 +147,7 @@ export default function DetailRfqPage({ params }) {
                                 </div>
                             )}
 
-                            {dataRfq.status === "Purchase Order" && (
+                            {dataQuotation.status === "Sales Order" && (
                                 <div className="flex gap-4">
                                     <button
                                         onClick={handleReturnProduct}
@@ -162,24 +162,24 @@ export default function DetailRfqPage({ params }) {
                             {/* Product Details */}
                             <div className="grid grid-cols-2 gap-4 mb-6">
                                 <div className="flex flex-col">
-                                    <span className="font-medium text-gray-600">RFQ Reference:</span>
-                                    <span className="text-lg font-bold text-gray-800">{dataRfq.referensi}</span>
+                                    <span className="font-medium text-gray-600">Quotation Reference:</span>
+                                    <span className="text-lg font-bold text-gray-800">{dataQuotation.referensi}</span>
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="font-medium text-gray-600">Vendor Name:</span>
-                                    <span className="text-lg font-bold text-gray-800">{dataRfq.nama_vendor}</span>
+                                    <span className="font-medium text-gray-600">Customer Name:</span>
+                                    <span className="text-lg font-bold text-gray-800">{dataQuotation.nama_customer}</span>
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="font-medium text-gray-600">Deadline Order:</span>
-                                    <span className="text-lg font-bold text-gray-800">{formatTanggal(dataRfq.deadline_order)}</span>
+                                    <span className="font-medium text-gray-600">Order Date:</span>
+                                    <span className="text-lg font-bold text-gray-800">{formatTanggal(dataQuotation.order_date)}</span>
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="font-medium text-gray-600">status:</span>
-                                    <span className="text-lg font-bold text-gray-800">{dataRfq.status}</span>
+                                    <span className="text-lg font-bold text-gray-800">{dataQuotation.status}</span>
                                 </div>
                             </div>
 
-                            <h2 className="text-2xl font-bold text-gray-800 mb-4">Bahan Details</h2>
+                            <h2 className="text-2xl font-bold text-gray-800 mb-4">Product Details</h2>
                             <div className="overflow-x-auto">
                                 <table className="w-full text-sm text-left text-gray-700 border-collapse border border-gray-200">
                                     <thead className="bg-gray-100">
@@ -193,16 +193,16 @@ export default function DetailRfqPage({ params }) {
                                     </thead>
                                     <tbody>
                                         {
-                                            dataRfq.Bahan.map((item, index) => (
+                                            dataQuotation.Produk.map((item, index) => (
                                                 <tr key={index}>
-                                                    <td className="px-10 py-2 border border-gray-300">{item.nama_bahan}</td>
-                                                    <td className="px-4 py-2 border border-gray-300 text-center">{item.jumlah_bahan}</td>
+                                                    <td className="px-10 py-2 border border-gray-300">{item.nama_produk}</td>
+                                                    <td className="px-4 py-2 border border-gray-300 text-center">{item.jumlah_produk}</td>
                                                     {showReceived && (
                                                         <td className="px-4 py-2 border border-gray-300 text-center">
-                                                            {item.jumlah_bahan}
+                                                            {item.jumlah_produk}
                                                         </td>
                                                     )}
-                                                    <td className="px-4 py-2 border border-gray-300 text-center">Rp. {item.biaya_bahan.toLocaleString()}</td>
+                                                    <td className="px-4 py-2 border border-gray-300 text-center">Rp. {item.harga_produk.toLocaleString()}</td>
                                                     <td className="px-4 py-2 border border-gray-300 text-center">Rp. {item.total_biaya.toLocaleString()}</td>
                                                 </tr>
                                             ))

@@ -9,8 +9,8 @@ import useOutsideClick from "@/app/hooks/useOutsideClick";
 import useForm from "@/app/hooks/useForm";
 import Swal from "sweetalert2";
 
-export default function DetailBillPage({ params }) {
-    const { referenceRfq } = use(params);
+export default function DetailInvoicePage({ params }) {
+    const { referenceQuotation } = use(params);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingButton, setIsLoadingButton] = useState(false);
     const [dataDetail, setDataDetail] = useState([]);
@@ -19,13 +19,13 @@ export default function DetailBillPage({ params }) {
     const modalRef = useRef(null);
     const { formData, error, handleInputChange, resetForm, setFormData, setError } = useForm({
         payment_date: '',
-        type_bill: "",
+        type_invoice: "",
         total_pembayaran: dataDetail?.total_pembayaran,
     });
 
     const fetchData = async () => {
         try {
-            await apiClient.get(`/bill/${referenceRfq}`, { cache: 'force-cache' })
+            await apiClient.get(`/salesInvoice/${referenceQuotation}`, { cache: 'force-cache' })
                 .then((res) => {
                     console.log(res.data.data);
                     setDataDetail(res.data.data);
@@ -43,24 +43,20 @@ export default function DetailBillPage({ params }) {
     }, []);
 
     useOutsideClick(modalRef, () => {
-        setFormData({
-            payment_date: '',
-            type_bill: "",
-            total_pembayaran: dataDetail?.total_pembayaran,
-        });
+        resetForm()
         setIsModalOpen(false);
     });
 
     const getTotalKeseluruhan = () => {
-        return dataDetail.Bahan.reduce((total, item) => total + (item.total_biaya || 0), 0);
+        return dataDetail.Produk.reduce((total, item) => total + (item.total_biaya || 0), 0);
     };
 
     const handleConfirm = async () => {
         try {
-            const response = await apiClient.put(`/bill/status/${dataDetail.id}`, { status: "Posted" });
+            const response = await apiClient.put(`/salesInvoice/status/${dataDetail.id}`, { status: "Posted" });
             setDataDetail(response.data.data);
         } catch (error) {
-            console.error("Error confirming RFQ:", error);
+            console.error("Error:", error);
         }
     };
 
@@ -69,8 +65,8 @@ export default function DetailBillPage({ params }) {
         setIsLoadingButton(true);
         console.log(formData)
         try {
-            await apiClient.put(`/bill/${dataDetail.id}`, formData);
-            await apiClient.put(`/bill/status/${dataDetail.id}`, { status: "Paid" })
+            await apiClient.put(`/salesInvoice/${dataDetail.id}`, formData);
+            await apiClient.put(`/salesInvoice/status/${dataDetail.id}`, { status: "Paid" })
             setIsLoadingButton(false);
             fetchData();
             resetForm()
@@ -95,7 +91,7 @@ export default function DetailBillPage({ params }) {
 
     return (
         <div className="p-4">
-            <h1 className="text-3xl font-bold text-gray-800 mb-4">Bill Purchase</h1>
+            <h1 className="text-3xl font-bold text-gray-800 mb-4">Sales Invoice</h1>
             {
                 isLoading ? (
                     <CircularProgress size={26} />
@@ -134,12 +130,12 @@ export default function DetailBillPage({ params }) {
                                     <form className="space-y-6">
                                         <div className="grid grid-cols-1 gap-4">
                                             <div>
-                                                <label htmlFor="referensi" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Referensi Bill</label>
+                                                <label htmlFor="referensi" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Referensi Invoice</label>
                                                 <input
                                                     type="text"
                                                     id="referensi"
                                                     name="referensi"
-                                                    value={dataDetail.referensi_bill}
+                                                    value={dataDetail.referensi_invoice}
                                                     className="mt-1 block w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                                                     placeholder="Referensi"
                                                     readOnly
@@ -151,18 +147,18 @@ export default function DetailBillPage({ params }) {
                                                     type="text"
                                                     id="referensi"
                                                     name="referensi"
-                                                    value={dataDetail.referensi_rfq}
+                                                    value={dataDetail.referensi_quotation}
                                                     className="mt-1 block w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                                                     placeholder="Referensi"
                                                     readOnly
                                                 />
                                             </div>
                                             <div>
-                                                <label htmlFor="type_bill" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Type Bill</label>
+                                                <label htmlFor="type_invoice" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Type Invoice</label>
                                                 <select
-                                                    id="type_bill"
-                                                    name="type_bill"
-                                                    value={formData.type_bill || ''}
+                                                    id="type_invoice"
+                                                    name="type_invoice"
+                                                    value={formData.type_invoice || ''}
                                                     onChange={handleInputChange}
                                                     className={`mt-1 block w-full p-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white ${error?.type_bill ? 'border-red-500 text-red-500' : 'border-gray-300 text-gray-900'}`}
                                                 >
@@ -170,7 +166,7 @@ export default function DetailBillPage({ params }) {
                                                     <option value="Cash" >Cash</option>
                                                     <option value="Bank" >Bank</option>
                                                 </select>
-                                                {error?.type_bill && <p className="text-red-500 text-sm mt-2">{error?.type_bill}</p>}
+                                                {error?.type_invoice && <p className="text-red-500 text-sm mt-2">{error?.type_invoice}</p>}
                                             </div>
                                             <div>
                                                 <label htmlFor="payment_date" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Deadline Order</label>
@@ -222,12 +218,12 @@ export default function DetailBillPage({ params }) {
                             {/* Product Details */}
                             <div className="grid grid-cols-2 gap-4 mb-6">
                                 <div className="flex flex-col">
-                                    <span className="font-medium text-gray-600">RFQ Reference:</span>
-                                    <span className="text-lg font-bold text-gray-800">{dataDetail.referensi_rfq}</span>
+                                    <span className="font-medium text-gray-600">Quotation Reference:</span>
+                                    <span className="text-lg font-bold text-gray-800">{dataDetail.referensi_quotation}</span>
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="font-medium text-gray-600">Vendor Name:</span>
-                                    <span className="text-lg font-bold text-gray-800">{dataDetail.nama_vendor}</span>
+                                    <span className="font-medium text-gray-600">Customer Name:</span>
+                                    <span className="text-lg font-bold text-gray-800">{dataDetail.nama_customer}</span>
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="font-medium text-gray-600">Confirmed Order:</span>
@@ -242,10 +238,10 @@ export default function DetailBillPage({ params }) {
                                     <span className="text-lg font-bold text-gray-800">{formatTanggal(dataDetail.accounting_date)}</span>
                                 </div>
                                 {
-                                    dataDetail.bill_date && (
+                                    dataDetail.invoice_date && (
                                         <div className="flex flex-col">
-                                            <span className="font-medium text-gray-600">Bill Date:</span>
-                                            <span className="text-lg font-bold text-gray-800">{formatTanggal(dataDetail.bill_date)}</span>
+                                            <span className="font-medium text-gray-600">Invoice Date:</span>
+                                            <span className="text-lg font-bold text-gray-800">{formatTanggal(dataDetail.invoice_date)}</span>
                                         </div>
                                     )
                                 }
@@ -263,7 +259,7 @@ export default function DetailBillPage({ params }) {
                                 </div>
                             </div>
 
-                            <h2 className="text-2xl font-bold text-gray-800 mb-4">Bahan Details</h2>
+                            <h2 className="text-2xl font-bold text-gray-800 mb-4">Produk Details</h2>
                             <div className="overflow-x-auto">
                                 <table className="w-full text-sm text-left text-gray-700 border-collapse border border-gray-200">
                                     <thead className="bg-gray-100">
@@ -277,12 +273,12 @@ export default function DetailBillPage({ params }) {
                                     </thead>
                                     <tbody>
                                         {
-                                            dataDetail.Bahan.map((item, index) => (
+                                            dataDetail.Produk.map((item, index) => (
                                                 <tr key={index}>
-                                                    <td className="px-10 py-2 border border-gray-300">{item.nama_bahan}</td>
-                                                    <td className="px-4 py-2 border border-gray-300 text-center">{item.jumlah_bahan}</td>
-                                                    <td className="px-4 py-2 border border-gray-300 text-center">{item.jumlah_bahan}</td>
-                                                    <td className="px-4 py-2 border border-gray-300 text-center">Rp. {item.biaya_bahan.toLocaleString()}</td>
+                                                    <td className="px-10 py-2 border border-gray-300">{item.nama_produk}</td>
+                                                    <td className="px-4 py-2 border border-gray-300 text-center">{item.jumlah_produk}</td>
+                                                    <td className="px-4 py-2 border border-gray-300 text-center">{item.jumlah_produk}</td>
+                                                    <td className="px-4 py-2 border border-gray-300 text-center">Rp. {item.harga_produk.toLocaleString()}</td>
                                                     <td className="px-4 py-2 border border-gray-300 text-center">Rp. {item.total_biaya.toLocaleString()}</td>
                                                 </tr>
                                             ))
