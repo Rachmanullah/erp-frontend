@@ -81,24 +81,24 @@ export default function DetailPurchaseOrderPage({ params }) {
                                     <span className="text-lg font-bold text-gray-800">{formatTanggal(dataDetail.arrival_date)}</span>
                                 </div>
                                 {
-                                    dataDetail.referensi_bill.bill_date && (
+                                    dataDetail.referensi_bill?.bill_date && (
                                         <div className="flex flex-col">
                                             <span className="font-medium text-gray-600">Bill Date:</span>
-                                            <span className="text-lg font-bold text-gray-800">{formatTanggal(dataDetail.referensi_bill.bill_date)}</span>
+                                            <span className="text-lg font-bold text-gray-800">{formatTanggal(dataDetail.referensi_bill?.bill_date)}</span>
                                         </div>
                                     )
                                 }
                                 {dataDetail.status === "Fully Billed" && (
                                     <>
-                                        {dataDetail.referensi_bill.payment_date && (
+                                        {dataDetail.referensi_bill?.payment_date && (
                                             <div className="flex flex-col">
                                                 <span className="font-medium text-gray-600">Payment Date:</span>
                                                 <span className="text-lg font-bold text-gray-800">
-                                                    {formatTanggal(dataDetail.referensi_bill.payment_date)}
+                                                    {formatTanggal(dataDetail.referensi_bill?.payment_date)}
                                                 </span>
                                             </div>
                                         )}
-                                        {dataDetail.referensi_bill.status && (
+                                        {dataDetail.referensi_bill?.status && (
                                             <div className="flex flex-col">
                                                 <span className="font-medium text-gray-600">Status Bill:</span>
                                                 <span className="text-lg font-bold text-gray-800">
@@ -108,10 +108,10 @@ export default function DetailPurchaseOrderPage({ params }) {
                                                             'Posted': 'text-white bg-cyan-500',
                                                             'Paid': 'text-white bg-green-500',
                                                             'Not Paid': 'text-white bg-red-500',
-                                                        }[dataDetail.referensi_bill.status] || 'text-black bg-gray-200'
+                                                        }[dataDetail.referensi_bill?.status] || 'text-black bg-gray-200'
                                                             }`}
                                                     >
-                                                        {dataDetail.referensi_bill.status}
+                                                        {dataDetail.referensi_bill?.status}
                                                     </span>
                                                 </span>
                                             </div>

@@ -121,7 +121,7 @@ export default function DetailRfqPage({ params }) {
                             )}
 
                             {/* Tombol Receive Product */}
-                            {dataRfq.status === "Confirmed" && (
+                            {(dataRfq.status === "Confirmed" || dataRfq.status === "Return") && (
                                 <button
                                     onClick={handleReceiveProduct}
                                     className="px-4 py-2 shadow-lg shadow-black bg-green-500 text-white rounded"

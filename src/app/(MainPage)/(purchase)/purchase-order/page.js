@@ -110,7 +110,7 @@ export default function PurchaseOrderPage() {
                                                 'Nothing to Bill': 'text-black bg-gray-500',
                                                 'Waiting Bill': 'text-white bg-cyan-500',
                                                 'Fully Billed': 'text-white bg-green-500',
-                                            }[item.status] || 'text-black bg-gray-200'
+                                            }[item.status] || 'text-white bg-red-500'
                                                 }`}
                                         >
                                             {item.status}

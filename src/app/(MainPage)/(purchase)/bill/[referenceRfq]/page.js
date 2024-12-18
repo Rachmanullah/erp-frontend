@@ -259,17 +259,17 @@ export default function DetailBillPage({ params }) {
                                 }
                                 <div className="flex flex-col">
                                     <span className="font-medium text-gray-600">status:</span>
-                                        <span
-                                            className={`max-w-max px-5 py-2 text-lg font-bold rounded-3xl ${{
-                                                'Draft': 'text-black bg-gray-500',
-                                                'Posted': 'text-white bg-cyan-500',
-                                                'Paid': 'text-white bg-green-500',
-                                                'Not Paid': 'text-white bg-red-500',
-                                            }[dataDetail.status] || 'text-black bg-gray-200'
-                                                }`}
-                                        >
-                                            {dataDetail.status}
-                                        </span>
+                                    <span
+                                        className={`max-w-max px-5 py-2 text-lg font-bold rounded-3xl ${{
+                                            'Draft': 'text-white bg-gray-500',
+                                            'Posted': 'text-white bg-cyan-500',
+                                            'Paid': 'text-white bg-green-500',
+                                            'Not Paid': 'text-white bg-red-500',
+                                        }[dataDetail.status] || 'text-white bg-red-500'
+                                            }`}
+                                    >
+                                        {dataDetail.status}
+                                    </span>
                                 </div>
                             </div>
 

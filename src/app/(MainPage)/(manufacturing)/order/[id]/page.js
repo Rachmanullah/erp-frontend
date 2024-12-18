@@ -120,7 +120,7 @@ export default function DetailOrder({ params }) {
         try {
             const response = await apiClient.put(`/order/status/${id}`, { status: 'Done' });
             setDataOrder(response.data.data)
-            setIsProductionDone(true);
+            setIsProductionDone(false);
         } catch (error) {
             console.error('Error marking as done:', error);
         }

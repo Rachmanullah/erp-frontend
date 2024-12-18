@@ -121,7 +121,7 @@ export default function DetailQuotationPage({ params }) {
                             )}
 
                             {/* Tombol Receive Product */}
-                            {dataQuotation.status === "Delivery" && (
+                            {(dataQuotation.status === "Delivery" || dataQuotation.status === "Return") && (
                                 <button
                                     onClick={handleReceiveProduct}
                                     className="px-4 py-2 bg-green-500 text-white rounded"
