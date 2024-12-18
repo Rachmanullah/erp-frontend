@@ -18,6 +18,8 @@ export default function Sidebar() {
         { label: "Data Customer", href: ROUTES.customer },
         { label: "Data Quotation", href: ROUTES.quotation },
         { label: "Sales Order", href: ROUTES.salesOrder },
+        { label: "Data Bill", href: ROUTES.bill },
+        { label: "Data Invoice", href: ROUTES.invoice },
     ];
 
     return (
