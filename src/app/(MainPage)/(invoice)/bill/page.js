@@ -34,9 +34,9 @@ export default function billPage() {
         fetchData();
     }, []);
 
-    // const getTotalKeseluruhan = () => {
-    //     return formData.bahan.reduce((total, item) => total + (item.total_biaya || 0), 0);
-    // };
+    const getTotalKeseluruhan = () => {
+        return dataBill.reduce((total, item) => total + (item.total_pembayaran || 0), 0);
+    };
 
     return (
         <div className="p-4" >
@@ -110,9 +110,6 @@ export default function billPage() {
                                         {formatTanggal(item.payment_date)}
                                     </td>
                                     <td className="px-6 py-4">
-                                        Rp. {item.total_pembayaran.toLocaleString()}
-                                    </td>
-                                    <td className="px-6 py-4">
                                         <span
                                             className={`px-5 py-2 text-md font-bold rounded-3xl ${{
                                                 Cancel: 'text-white bg-red-500',
@@ -127,6 +124,9 @@ export default function billPage() {
                                             {item.status}
                                         </span>
                                     </td>
+                                    <td className="px-6 py-4">
+                                        Rp. {item.total_pembayaran.toLocaleString()}
+                                    </td>
                                 </tr>
                             ))
                         ) : (
@@ -136,6 +136,12 @@ export default function billPage() {
                                 </td>
                             </tr>
                         )}
+                        <tr className="bg-gray-100 font-bold">
+                            <td className="px-4 py-2 border border-gray-300" colSpan='6' align="right">
+                                Total
+                            </td>
+                            <td className="px-4 py-2 border border-gray-300 text-center">Rp. {getTotalKeseluruhan().toLocaleString()}</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
