@@ -22,6 +22,7 @@ export default function Sidebar() {
                 { label: "Data Product", href: ROUTES.product },
                 { label: "Data Bahan", href: ROUTES.bahan },
                 { label: "BoM", href: ROUTES.BoM },
+                { label: "Data Order", href: ROUTES.order },
             ],
         },
         {
@@ -51,7 +52,7 @@ export default function Sidebar() {
 
     return (
         <div className="flex">
-            <aside id="logo-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
+            <aside id="logo-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen pt-16 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
                 <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
                     <ul className="space-y-2 font-medium">
                         {/* Dashboard */}
@@ -91,7 +92,7 @@ export default function Sidebar() {
 
                                 {/* Sub-menu */}
                                 <ul
-                                    className={`pl-6 mt-2 space-y-1 overflow-hidden transition-all duration-300 ease-in-out ${openCategory === menuCategory.category ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+                                    className={`pl-6 mt-2 space-y-1 overflow-hidden transition-all duration-300 ease-in-out ${openCategory === menuCategory.category ? "max-h-48 opacity-100" : "max-h-0 opacity-0"
                                         }`}
                                 >
                                     {menuCategory.items.map((menu, subIndex) => (

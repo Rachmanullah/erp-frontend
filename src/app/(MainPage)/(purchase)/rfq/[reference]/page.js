@@ -32,6 +32,29 @@ export default function DetailRfqPage({ params }) {
     const getTotalKeseluruhan = () => {
         return dataRfq.Bahan.reduce((total, item) => total + (item.total_biaya || 0), 0);
     };
+    const handlePrint = async () => {
+        try {
+            const response = await apiClient.get(`/print/rfq/${dataRfq.referensi}`);
+
+            // Ambil data PDF berupa angka yang dipisahkan oleh koma
+            const pdfString = response.data.pdf; // "37,80,68,70,..."
+            const byteArray = new Uint8Array(pdfString.split(',').map(Number)); // Konversi ke Uint8Array
+
+            // Buat Blob untuk PDF
+            const pdfBlob = new Blob([byteArray], { type: 'application/pdf' });
+            const pdfURL = URL.createObjectURL(pdfBlob);
+
+            // Buka PDF di tab baru
+            window.open(pdfURL, '_blank');
+
+            // Simpan data RFQ ke state
+            setDataRfq(response.data.data);
+        } catch (error) {
+            console.error("Error printing RFQ:", error);
+        }
+    };
+
+
 
     const handleSendRfq = async () => {
         try {
@@ -100,6 +123,12 @@ export default function DetailRfqPage({ params }) {
                 ) : (
                     <div>
                         <div className="mt-4 flex space-x-4">
+                            <button
+                                onClick={handlePrint}
+                                className="px-4 py-2 shadow-lg shadow-black bg-gray-500 text-white rounded"
+                            >
+                                Print
+                            </button>
                             {/* Tombol Send RFQ */}
                             {dataRfq.status === "RFQ" && (
                                 <button

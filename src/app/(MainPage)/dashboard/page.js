@@ -27,7 +27,7 @@ export default function Home() {
             setTotalInvoice(resTotalInvoice.data.data);
             setTopInvoice(resTopInvoice.data.data);
             setTopProduct(resTopProduct.data.data);
-
+            console.log(resTopProduct.data.data)
             setIsLoading(false);
         } catch (error) {
             console.error("Error:", error);
@@ -67,12 +67,20 @@ export default function Home() {
                     {/* Produk Terbaik */}
                     <div className="bg-white rounded-lg shadow-md p-6">
                         <h2 className="text-xl font-semibold text-gray-700">Produk Terbaik</h2>
-                        {topProduct ? (
+                        {topProduct && Object.keys(topProduct).length > 0 ? (
                             <div className="mt-4 flex items-center space-x-4">
                                 {/* Gambar produk */}
-                                <Image src={`http://localhost:2000${topProduct.image}`} width={16} height={16} alt={topProduct.nama_produk} className="w-16 h-16 bg-gray-200 rounded-full" />
+                                <Image
+                                    src={`http://localhost:2000${topProduct.image}`}
+                                    width={64}
+                                    height={64}
+                                    alt={topProduct.nama_produk}
+                                    className="w-16 h-16 bg-gray-200 rounded-full"
+                                />
                                 <div>
-                                    <h3 className="text-lg font-semibold text-gray-800">{topProduct.nama_produk}</h3>
+                                    <h3 className="text-lg font-semibold text-gray-800">
+                                        {topProduct.nama_produk}
+                                    </h3>
                                     <p className="text-sm text-gray-600">{topProduct.referensi}</p>
                                 </div>
                             </div>
@@ -80,6 +88,7 @@ export default function Home() {
                             <p className="text-gray-500">Tidak ada data produk terbaik.</p>
                         )}
                     </div>
+
                     {/* Top Invoice */}
                     <div className="bg-white rounded-lg shadow-md p-6">
                         <h2 className="text-xl font-semibold text-gray-700 mb-4">Top Invoice</h2>

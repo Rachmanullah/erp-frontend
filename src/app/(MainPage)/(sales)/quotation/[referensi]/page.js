@@ -9,6 +9,8 @@ export default function DetailQuotationPage({ params }) {
     const [isLoading, setIsLoading] = useState(true);
     const [dataQuotation, setDataQuotation] = useState([]);
     const [showReceived, setShowReceived] = useState(false);
+    const [isCheckingStock, setIsCheckingStock] = useState(false);
+    const [stockStatus, setStockStatus] = useState([]);
 
     const fetchData = async () => {
         try {
@@ -31,6 +33,34 @@ export default function DetailQuotationPage({ params }) {
 
     const getTotalKeseluruhan = () => {
         return dataQuotation.Produk.reduce((total, item) => total + (item.total_biaya || 0), 0);
+    };
+
+    const checkStockAvailability = async () => {
+        setIsCheckingStock(true);
+        try {
+            const stockPromises = dataQuotation.Produk.map((item) =>
+                apiClient.get(`/product/${item.id_produk}`)
+            );
+
+            const stockResponses = await Promise.all(stockPromises);
+            console.log(stockResponses)
+            // Map hasil respons untuk mengecek ketersediaan stok
+            const stockStatusArray = stockResponses.map((response, index) => {
+                const produk = dataQuotation.Produk[index];
+                const stok = response.data.data.stok || 0; // Default stok ke 0 jika tidak ada
+                return {
+                    ...produk,
+                    stok,
+                    isAvailable: stok >= produk.jumlah_produk, // Bandingkan stok dengan jumlah yang dibutuhkan
+                };
+            });
+
+            setStockStatus(stockStatusArray);
+            setIsCheckingStock(false);
+        } catch (error) {
+            console.error("Error checking stock:", error);
+            setIsCheckingStock(false);
+        }
     };
 
     const handleSendQuotation = async () => {
@@ -91,6 +121,8 @@ export default function DetailQuotationPage({ params }) {
         }
     };
 
+    const allStockAvailable = stockStatus.length > 0 && stockStatus.every((item) => item.isAvailable);
+    console.log(allStockAvailable)
     return (
         <div className="p-6">
             <h1 className="text-3xl font-bold text-gray-800 mb-4">Sales Quotation</h1>
@@ -100,6 +132,17 @@ export default function DetailQuotationPage({ params }) {
                 ) : (
                     <div>
                         <div className="mt-4 flex space-x-4">
+                            {/* Tombol Check Availability hanya ditampilkan jika stok belum dicek atau ada produk yang tidak tersedia */}
+                            {!allStockAvailable && (
+                                <button
+                                    onClick={checkStockAvailability}
+                                    disabled={isCheckingStock}
+                                    className={`px-4 py-2 rounded ${isCheckingStock ? "bg-gray-400" : "bg-blue-500 text-white"}`}
+                                >
+                                    {isCheckingStock ? "Checking Stock..." : "Check Availability"}
+                                </button>
+                            )}
+
                             {/* Tombol Send RFQ */}
                             {dataQuotation.status === "Quotation" && (
                                 <button
@@ -110,11 +153,12 @@ export default function DetailQuotationPage({ params }) {
                                 </button>
                             )}
 
-                            {/* Tombol Confirm Order */}
+                            {/* Tombol Confirm Order hanya aktif jika semua stok tersedia */}
                             {dataQuotation.status === "Quotation Sent" && (
                                 <button
                                     onClick={handleConfirmOrder}
-                                    className="px-4 py-2 bg-blue-500 text-white rounded"
+                                    disabled={!allStockAvailable}
+                                    className={`px-4 py-2 rounded ${allStockAvailable ? "bg-blue-500 text-white" : "bg-gray-400"}`}
                                 >
                                     Confirm
                                 </button>
@@ -158,6 +202,7 @@ export default function DetailQuotationPage({ params }) {
                                 </div>
                             )}
                         </div>
+
                         <div className="bg-white shadow-lg rounded-lg p-4">
                             {/* Product Details */}
                             <div className="grid grid-cols-2 gap-4 mb-6">
@@ -206,19 +251,27 @@ export default function DetailQuotationPage({ params }) {
                                     </thead>
                                     <tbody>
                                         {
-                                            dataQuotation.Produk.map((item, index) => (
-                                                <tr key={index}>
-                                                    <td className="px-10 py-2 border border-gray-300">{item.nama_produk}</td>
-                                                    <td className="px-4 py-2 border border-gray-300 text-center">{item.jumlah_produk}</td>
-                                                    {showReceived && (
-                                                        <td className="px-4 py-2 border border-gray-300 text-center">
-                                                            {item.jumlah_produk}
-                                                        </td>
-                                                    )}
-                                                    <td className="px-4 py-2 border border-gray-300 text-center">Rp. {item.harga_produk.toLocaleString()}</td>
-                                                    <td className="px-4 py-2 border border-gray-300 text-center">Rp. {item.total_biaya.toLocaleString()}</td>
-                                                </tr>
-                                            ))
+                                            dataQuotation.Produk.map((item, index) => {
+                                                const stockInfo = stockStatus.find((produk) => produk.id_produk === item.id_produk);
+                                                return (
+                                                    <tr key={index}>
+                                                        <td className="px-10 py-2 border border-gray-300">{item.nama_produk}</td>
+                                                        <td className={`px-4 py-2 border border-gray-300 ${stockStatus.length > 0
+                                                            ? stockInfo?.isAvailable
+                                                                ? "bg-green-200"
+                                                                : "bg-red-200"
+                                                            : ""
+                                                            }`}>{item.jumlah_produk}</td>
+                                                        {showReceived && (
+                                                            <td className="px-4 py-2 border border-gray-300 text-center">
+                                                                {item.jumlah_produk}
+                                                            </td>
+                                                        )}
+                                                        <td className="px-4 py-2 border border-gray-300 text-center">Rp. {item.harga_produk.toLocaleString()}</td>
+                                                        <td className="px-4 py-2 border border-gray-300 text-center">Rp. {item.total_biaya.toLocaleString()}</td>
+                                                    </tr>
+                                                )
+                                            })
                                         }
                                         <tr className="bg-gray-100 font-bold">
                                             <td className="px-4 py-2 border border-gray-300" colSpan={showReceived ? '4' : '3'} align="right">

@@ -33,7 +33,6 @@ export default function BoMPage() {
         resetForm();
         setIsModalOpen(false);
         setIsEdit(false);
-        setSelectedVendor(null);
     }, []);
 
     const fetchData = async () => {
