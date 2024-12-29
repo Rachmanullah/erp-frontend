@@ -71,7 +71,7 @@ export default function Home() {
                             <div className="mt-4 flex items-center space-x-4">
                                 {/* Gambar produk */}
                                 <Image
-                                    src={`http://localhost:2000${topProduct.image}`}
+                                    src={`http://localhost:2000/${topProduct.image}`}
                                     width={64}
                                     height={64}
                                     alt={topProduct.nama_produk}

@@ -310,7 +310,7 @@ export default function ProductPage() {
                         {/* Product Image */}
                         <div className="mb-4">
                             <Image
-                                src={`http://localhost:2000${selectedProduct.gambar_produk}`}
+                                src={`http://localhost:2000/${selectedProduct.gambar_produk}`}
                                 alt={selectedProduct.nama_produk}
                                 width={300}
                                 height={200}
@@ -372,7 +372,7 @@ export default function ProductPage() {
                     dataProduct.map((item, index) => (
                         <div key={index} onClick={() => handleCardClick(item)} className="bg-white p-4 rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-105 cursor-pointer">
                             <div className="h-40 bg-gray-200 rounded-lg">
-                                <Image src={`http://localhost:2000${item.gambar_produk}`} alt={item.nama_produk} width={300} height={300} className="w-full h-full object-cover rounded-lg" />
+                                <Image src={`http://localhost:2000/${item.gambar_produk}`} alt={item.nama_produk} width={300} height={300} className="w-full h-full object-cover rounded-lg" />
                             </div>
                             <h3 className="mt-2 text-lg font-semibold">{item.nama_produk}</h3>
                             <p className="text-sm text-gray-600">{item.referensi}</p>
