@@ -4,7 +4,6 @@ import axios from 'axios';
 // Konfigurasi dasar Axios
 const apiClient = axios.create({
     baseURL: 'http://localhost:2000/api/', // Ganti dengan URL backend Anda
-    // baseURL: 'https://erp-backend-ochre.vercel.app/api/', // Ganti dengan URL backend Anda
     headers: {
         'Content-Type': 'application/json',
     },

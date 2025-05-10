@@ -278,7 +278,7 @@ export default function BahanPage() {
                         {/* Product Image */}
                         <div className="mb-4">
                             <Image
-                                src={`http://192.168.224.160:2000/${selectedBahan.gambar_bahan}`}
+                                src={`http://localhost:2000${selectedBahan.gambar_bahan}`}
                                 alt={selectedBahan.nama_bahan}
                                 width={300}
                                 height={200}
@@ -334,7 +334,7 @@ export default function BahanPage() {
                     dataBahan.map((item, index) => (
                         <div key={index} onClick={() => handleCardClick(item)} className="bg-white p-4 rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-105 cursor-pointer">
                             <div className="h-40 bg-gray-200 rounded-lg">
-                                <Image src={`http://192.168.224.160:2000/${item.gambar_bahan}`} alt={item.nama_bahan} width={300} height={300} className="w-full h-full object-cover rounded-lg" />
+                                <Image src={`http://localhost:2000${item.gambar_bahan}`} alt={item.nama_bahan} width={300} height={300} className="w-full h-full object-cover rounded-lg" />
                             </div>
                             <h3 className="mt-2 text-lg font-semibold">{item.nama_bahan}</h3>
                             {/* <p className="text-sm text-gray-600">{item.referensi}</p> */}
